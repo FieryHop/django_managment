@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Управление справочниками</h1>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5>Статусы операций</h5>
+                </div>
+                <div class="card-body">
+                    <p>Управление статусами финансовых операций: Бизнес, Личное, Налог и др.</p>
+                    <a href="{% url 'references:status_list' %}" class="btn btn-outline-primary">Перейти к статусам</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h5>Типы операций</h5>
+                </div>
+                <div class="card-body">
+                    <p>Управление типами операций: Пополнение, Списание и др.</p>
+                    <a href="{% url 'references:type_list' %}" class="btn btn-outline-success">Перейти к типам</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-info text-white">
+                    <h5>Категории</h5>
+                </div>
+                <div class="card-body">
+                    <p>Управление категориями операций, привязанными к типам.</p>
+                    <a href="{% url 'references:category_list' %}" class="btn btn-outline-info">Перейти к категориям</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <div class="card-header bg-warning text-dark">
+                    <h5>Подкатегории</h5>
+                </div>
+                <div class="card-body">
+                    <p>Управление подкатегориями, привязанными к категориям.</p>
+                    <a href="{% url 'references:subcategory_list' %}" class="btn btn-outline-warning">Перейти к подкатегориям</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

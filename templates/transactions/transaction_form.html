@@ -1,0 +1,92 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<h2>{{ title }}</h2>
+<form method="post" id="transaction-form">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Сохранить</button>
+    <a href="{% url 'transaction_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+
+<script>
+    // Ожидаем полной загрузки страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        // Проверяем доступность jQuery
+        if (typeof jQuery === 'undefined') {
+            console.error('jQuery is not loaded!');
+            return;
+        }
+
+        // Используем алиас jQuery вместо $ для надежности
+        jQuery(document).ready(function($) {
+            // Загрузка категорий при изменении типа
+            $("#id_type").change(function () {
+                var typeId = $(this).val();
+                if (!typeId) return;
+
+                $.ajax({
+                    url: "{% url 'load_categories' %}",
+                    data: {'type_id': typeId},
+                    success: function (data) {
+                        var categorySelect = $("#id_category");
+                        categorySelect.empty().append('<option value="">---------</option>');
+
+                        $.each(data, function(i, item) {
+                            categorySelect.append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        }); // Закрывающая скобка для $.each
+                    },
+                    error: function(xhr) {
+                        console.error('Error loading categories:', xhr.responseText);
+                    }
+                });
+            });
+
+            // Загрузка подкатегорий при изменении категории
+            $("#id_category").change(function () {
+                var categoryId = $(this).val();
+                if (!categoryId) return;
+
+                $.ajax({
+                    url: "{% url 'load_subcategories' %}",
+                    data: {'category_id': categoryId},
+                    success: function (data) {
+                        var subcategorySelect = $("#id_subcategory");
+                        subcategorySelect.empty().append('<option value="">---------</option>');
+
+                        $.each(data, function(i, item) {
+                            subcategorySelect.append($('<option>', {
+                                value: item.id,
+                                text: item.name
+                            }));
+                        }); // Закрывающая скобка для $.each
+                    },
+                    error: function(xhr) {
+                        console.error('Error loading subcategories:', xhr.responseText);
+                    }
+                });
+            });
+
+            // Инициализация при редактировании существующей записи
+            {% if form.instance.pk %}
+                // Запускаем изменение типа для загрузки категорий
+                $("#id_type").trigger('change');
+
+                // Устанавливаем категорию и подкатегорию через каскадные задержки
+                setTimeout(function() {
+                    $("#id_category").val("{{ form.instance.category.id }}");
+                    $("#id_category").trigger('change');
+
+                    setTimeout(function() {
+                        $("#id_subcategory").val("{{ form.instance.subcategory.id }}");
+                    }, 300);
+                }, 500);
+            {% endif %}
+        });
+    });
+</script>
+{% endblock %}
